@@ -24,15 +24,13 @@ def get_service():
     http = httplib2.Http()
     http = credentials.authorize(http)
 
-    service = build_service("androidpublisher", "v3", http=http)
-
-    return service
+    return build_service("androidpublisher", "v3", http=http)
 
 
 def parse_strings_resources(filename):
     with open(filename, "r") as fd:
         dom = parse_xml(fd)
-    result = dict()
+    result = {}
     for element in dom.childNodes[0].getElementsByTagName("string"):
         key = element.attributes.getNamedItem("name").value
         value = element.childNodes[0].data
@@ -42,7 +40,7 @@ def parse_strings_resources(filename):
 
 def load_string_resources():
     regex = re.compile("-(.*)\/")
-    strings = dict()
+    strings = {}
 
     for fname in glob("ActivityLauncherApp/src/main/res/values-*/strings.xml"):
         code = next(regex.finditer(fname))[1].split("-")
