@@ -26,21 +26,19 @@ class LoadingFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        val context = this.requireActivity()
-
-        thread {
-            // preload package list
-            packageListService.get()
-
-            lifecycleScope.launch {
-                lifecycle.withResumed {
-                    val action = LoadingFragmentDirections.actionLoadingFinished()
-                    findNavController().navigate(action)
-                }
+        lifecycleScope.launch {
+        withResumed {
+            // preload package list on background thread, but switch back to main thread to navigate
+            withContext(Dispatchers.IO) {
+                packageListService.get()
             }
+            val action = LoadingFragmentDirections.actionLoadingFinished()
+            findNavController().navigate(action)
         }
-
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_loading, container, false)
     }
+        
+    // Inflate the layout for this fragment
+    return inflater.inflate(R.layout.fragment_loading, container, false)
+    
+    }    
 }
