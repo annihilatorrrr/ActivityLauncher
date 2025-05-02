@@ -125,6 +125,10 @@ class IconCreatorServiceImpl @Inject constructor(
     private fun doCreateShortcut(
         appName: String, intent: Intent, asRoot: Boolean, iconResourceName: String?
     ) {
+        // Check for null or empty appName
+        if (appName.isEmpty()) {
+            throw IllegalArgumentException("Shortcut name cannot be empty")
+        }
         val shortcutIntent = Intent()
         if (asRoot) {
             // wrap only if root access needed
@@ -133,7 +137,8 @@ class IconCreatorServiceImpl @Inject constructor(
             shortcutIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, intent)
         }
         shortcutIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, appName)
-        if (iconResourceName != null) {
+        // If iconResourceName is provided, check that it's not empty
+        if (!iconResourceName.isNullOrEmpty()) { 
             val ir = ShortcutIconResource()
             if (intent.component == null) {
                 ir.packageName = intent.getPackage()
